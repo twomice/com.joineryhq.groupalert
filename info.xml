@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<extension key="com.joineryhq.groupalert" type="module">
+  <file>groupalert</file>
+  <name>Group Contact Alert</name>
+  <description>Provides an API suitable for use with Scheduled Jobs, to send you an email if the given group contains contacts.</description>
+  <license>GPL-3.0</license>
+  <maintainer>
+    <author>Allen Shaw</author>
+    <email>allen@JoineryHQ.com</email>
+  </maintainer>
+  <urls>
+    <url desc="Main Extension Page">http://FIXME</url>
+    <url desc="Documentation">http://FIXME</url>
+    <url desc="Support">http://FIXME</url>
+    <url desc="Licensing">http://www.gnu.org/licenses/gpl-3.0.html</url>
+  </urls>
+  <releaseDate>2017-02-22</releaseDate>
+  <version>0.1</version>
+  <develStage>beta</develStage>
+  <compatibility>
+    <ver>4.7</ver>
+  </compatibility>
+  <comments></comments>
+  <civix>
+    <namespace>CRM/Groupalert</namespace>
+  </civix>
+</extension>
