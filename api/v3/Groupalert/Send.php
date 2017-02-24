@@ -169,7 +169,7 @@ function _civicrm_api3_groupalert_Send_getbody($group_title, $contact_count, $co
   $group_id = (int)CRM_Utils_Array::value('group_id', $params, 0);
   $do_list_contacts = CRM_Utils_Array::value('list_contacts', $params, 0);
 
-  $url = CRM_Utils_System::url('/civicrm/group/search', 'force=1&context=smog&gid='. $group_id, TRUE);
+  $url = CRM_Utils_System::url('/civicrm/group/search', 'force=1&context=smog&gid='. $group_id, TRUE, NULL, FALSE);
 
   // TODO: Include count of all contacts in the group.
   // Currently (4.7.16), getcount returns "1" for all smart groups, no matter what,
