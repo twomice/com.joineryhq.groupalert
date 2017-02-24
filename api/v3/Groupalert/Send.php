@@ -61,41 +61,59 @@ function civicrm_api3_groupalert_Send($params) {
 
   $recipient_addresses = _civicrm_api3_groupalert_Send_getrecipients($params);
   if (empty($recipient_addresses)) {
-    // If there are no recipients
+    // If there are no recipients, just return. Someone will have thrown an
+    // exception by now.
     return;
   }
 
-  $result = civicrm_api3('Contact', 'get', array(
-    'is_deleted' => 0,
-    'group' => array($group_id => 1),
+  // Ensure the group exists, and get the group title.
+  $group_title = '';
+  $result = civicrm_api3('Group', 'get', array(
+    'id' => $group_id,
+    'sequential' => 1,
     'return' => array(
-      'sort_name'
-    ),
-    'options' => array(
-      'limit' => $list_contacts_limit,
-      'sort' => 'sort_name',
+      'title'
     ),
   ));
+  if (empty($result['values'][0])) {
+    throw new API_Exception("Cannot find a group with ID $group_id.");
+    return;
+  }
+  $group_title = CRM_Utils_Array::value('title', $result['values'][0]);
 
-  if ($noisy || $result['count']) {
-    $contacts = $result['values'];
 
-    $group_title = '';
-    $result = civicrm_api3('Group', 'get', array(
-      'id' => $group_id,
-      'sequential' => 1,
+  // TODO: Get count of all contacts in the group.
+  // Currently (4.7.16), getcount returns "1" for all smart groups, no matter what,
+  // so until that's fixed, this part won't work.
+  //  $result = civicrm_api3('Contact', 'getcount', array(
+  //    'is_deleted' => 0,
+  //    'group' => array($group_id => 1),
+  //  ));
+  //  $contact_count = $result;
+  $contact_count = 1; // See not above.
+
+  // Don't bother getting the contacts if the count is 0.
+  if ($contact_count) {
+    $result = civicrm_api3('Contact', 'get', array(
+      'is_deleted' => 0,
+      'group' => array($group_id => 1),
       'return' => array(
-        'title'
+        'sort_name'
+      ),
+      'options' => array(
+        'limit' => $list_contacts_limit,
+        'sort' => 'sort_name',
       ),
     ));
-    if (!empty($result['values'][0])) {
-      $group_title = CRM_Utils_Array::value('title', $result['values'][0]);
-    }
+    $contacts = $result['values'];
+  }
+  else {
+    $contacts = array();
+  }
 
-    $body = _civicrm_api3_groupalert_Send_getbody($group_title, $contacts, $params);
-
+  if ($noisy || $contact_count) {
+    $body = _civicrm_api3_groupalert_Send_getbody($group_title, $contact_count, $contacts, $params);
     $sent_count = _civicrm_api3_groupalert_Send_sendmail($recipient_addresses, $body, $group_title);
-
   }
   return civicrm_api3_create_success("Sent $sent_count email(s).", $params, 'Groupalert', 'send');
 }
@@ -146,26 +164,35 @@ function _civicrm_api3_groupalert_Send_getrecipients($params) {
   return $valid_addresses;
 }
 
-function _civicrm_api3_groupalert_Send_getbody($group_title, $contacts, $params) {
+function _civicrm_api3_groupalert_Send_getbody($group_title, $contact_count, $contact_list, $params) {
+
   $group_id = (int)CRM_Utils_Array::value('group_id', $params, 0);
-  $list_contacts = CRM_Utils_Array::value('list_contacts', $params, 0);
+  $do_list_contacts = CRM_Utils_Array::value('list_contacts', $params, 0);
 
-  $url = CRM_Utils_System::url('/civicrm/group/search', 'force=1&context=smog&gid=1', TRUE);
+  $url = CRM_Utils_System::url('/civicrm/group/search', 'force=1&context=smog&gid='. $group_id, TRUE);
 
-  $contact_count = count($contacts);
-  $body = "There are $contact_count contact(s) in the group: $group_title\n\n";
+  // TODO: Include count of all contacts in the group.
+  // Currently (4.7.16), getcount returns "1" for all smart groups, no matter what,
+  // so until that's fixed, this part won't work.
+  //  $body = "There are $contact_count contact(s) in the group: $group_title\n\n";
 
-  if ($contact_count) {
+  $list_contacts_limit = CRM_Utils_Array::value('list_contacts_limit', $params, 0);
+  $contact_list_count = count($contact_list);
+  if ($contact_list_count == $list_contacts_limit) {
+    $count_disclaiminer = " at least";
+    $limit_disclaimer = " (First $contact_list_count only)";
+  }
+  $body = "There are {$count_disclaiminer}$contact_list_count contact(s) in the group: $group_title\n\n";
+
+  if ($contact_list_count) {
     $body .= "View group contacts here:\n$url\n";
-
-    if ($list_contacts) {
+    if ($do_list_contacts) {
       $body .= "\n";
-      $body .= "Group contacts:\n\n";
-      foreach ($contacts as $contact_id => $contact) {
+      $body .= "Group contacts{$limit_disclaimer}:\n\n";
+      foreach ($contact_list as $contact_id => $contact) {
         $body .= "${contact['sort_name']} (cid: {$contact_id})\n";
       }
     }
   }
-  dsm("====\n$body");
   return $body;
 }
