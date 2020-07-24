@@ -128,24 +128,24 @@ function groupalert_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  * Implements hook_civicrm_preProcess().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
- *
-function groupalert_civicrm_preProcess($formName, &$form) {
+ */
+// function groupalert_civicrm_preProcess($formName, &$form) {
 
-} // */
+// } // */
 
 /**
  * Implements hook_civicrm_navigationMenu().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
- *
-function groupalert_civicrm_navigationMenu(&$menu) {
-  _groupalert_civix_insert_navigation_menu($menu, NULL, array(
-    'label' => ts('The Page', array('domain' => 'com.joineryhq.groupalert')),
-    'name' => 'the_page',
-    'url' => 'civicrm/the-page',
-    'permission' => 'access CiviReport,access CiviContribute',
-    'operator' => 'OR',
-    'separator' => 0,
-  ));
-  _groupalert_civix_navigationMenu($menu);
-} // */
+ */
+// function groupalert_civicrm_navigationMenu(&$menu) {
+//   _groupalert_civix_insert_navigation_menu($menu, NULL, array(
+//     'label' => ts('The Page', array('domain' => 'com.joineryhq.groupalert')),
+//     'name' => 'the_page',
+//     'url' => 'civicrm/the-page',
+//     'permission' => 'access CiviReport,access CiviContribute',
+//     'operator' => 'OR',
+//     'separator' => 0,
+//   ));
+//   _groupalert_civix_navigationMenu($menu);
+// } // */
