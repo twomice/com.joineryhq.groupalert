@@ -55,7 +55,7 @@ function _civicrm_api3_groupalert_Send_spec(&$spec) {
  */
 function civicrm_api3_groupalert_Send($params) {
   $sent_count = 0;
-  $group_id = (int)CRM_Utils_Array::value('group_id', $params, 0);
+  $group_id = (int) CRM_Utils_Array::value('group_id', $params, 0);
   $noisy = CRM_Utils_Array::value('noisy', $params, 0);
   $list_contacts_limit = CRM_Utils_Array::value('list_contacts_limit', $params, 25);
 
@@ -72,7 +72,7 @@ function civicrm_api3_groupalert_Send($params) {
     'id' => $group_id,
     'sequential' => 1,
     'return' => array(
-      'title'
+      'title',
     ),
   ));
   if (empty($result['values'][0])) {
@@ -80,7 +80,6 @@ function civicrm_api3_groupalert_Send($params) {
     return;
   }
   $group_title = CRM_Utils_Array::value('title', $result['values'][0]);
-
 
   // TODO: Get count of all contacts in the group.
   // Currently (4.7.16), getcount returns "1" for all smart groups, no matter what,
@@ -90,7 +89,8 @@ function civicrm_api3_groupalert_Send($params) {
   //    'group' => array($group_id => 1),
   //  ));
   //  $contact_count = $result;
-  $contact_count = 1; // See not above.
+  // See not above.
+  $contact_count = 1;
 
   // Don't bother getting the contacts if the count is 0.
   if ($contact_count) {
@@ -98,7 +98,7 @@ function civicrm_api3_groupalert_Send($params) {
       'is_deleted' => 0,
       'group' => array($group_id => 1),
       'return' => array(
-        'sort_name'
+        'sort_name',
       ),
       'options' => array(
         'limit' => $list_contacts_limit,
@@ -134,7 +134,7 @@ function _civicrm_api3_groupalert_Send_sendmail($recipient_addresses, $body, $su
       'subject' => $subject,
       'text' => $body,
     );
-    $sent += (int)CRM_Utils_Mail::send($params);
+    $sent += (int) CRM_Utils_Mail::send($params);
   }
   return $sent;
 }
@@ -157,7 +157,7 @@ function _civicrm_api3_groupalert_Send_getrecipients($params) {
   }
 
   if (!empty($invalid_addresses)) {
-    throw new API_Exception('Incorrectly formatted recipient emails: '. implode(', ', $invalid_addresses) .'; no action taken.');
+    throw new API_Exception('Incorrectly formatted recipient emails: ' . implode(', ', $invalid_addresses) . '; no action taken.');
     return array();
   }
 
@@ -166,10 +166,10 @@ function _civicrm_api3_groupalert_Send_getrecipients($params) {
 
 function _civicrm_api3_groupalert_Send_getbody($group_title, $contact_count, $contact_list, $params) {
 
-  $group_id = (int)CRM_Utils_Array::value('group_id', $params, 0);
+  $group_id = (int) CRM_Utils_Array::value('group_id', $params, 0);
   $do_list_contacts = CRM_Utils_Array::value('list_contacts', $params, 0);
 
-  $url = CRM_Utils_System::url('/civicrm/group/search', 'force=1&context=smog&gid='. $group_id, TRUE, NULL, FALSE);
+  $url = CRM_Utils_System::url('/civicrm/group/search', 'force=1&context=smog&gid=' . $group_id, TRUE, NULL, FALSE);
 
   // TODO: Include count of all contacts in the group.
   // Currently (4.7.16), getcount returns "1" for all smart groups, no matter what,
