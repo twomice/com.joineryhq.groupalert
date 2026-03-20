@@ -18,10 +18,18 @@
   <version>0.2</version>
   <develStage>beta</develStage>
   <compatibility>
-    <ver>4.7</ver>
+    <ver>5.51</ver>
   </compatibility>
-  <comments></comments>
+  <comments/>
   <civix>
     <namespace>CRM/Groupalert</namespace>
+    <format>25.10.2</format>
   </civix>
+  <mixins>
+    <mixin>mgd-php@2.0.0</mixin>
+    <mixin>scan-classes@1.0.0</mixin>
+  </mixins>
+  <classloader>
+    <psr4 prefix="Civi\" path="Civi"/>
+  </classloader>
 </extension>
